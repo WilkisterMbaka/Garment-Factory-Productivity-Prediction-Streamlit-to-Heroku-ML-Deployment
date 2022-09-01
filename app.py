@@ -30,11 +30,11 @@ result =""
 import pickle
 import streamlit as st
  
-# loading the trained model
-pickle_in = open('classifier.pkl', 'rb') 
-classifier = pickle.load(pickle_in)
 
-import joblib
+# load saved model
+with open('classifier.pkl' , 'rb') as f:
+    classifier = pickle.load(f)
+
 def prediction(quarter, department, team, targeted_productivity, std_minute_value, work_in_progress, over_time, incentive, idle_men, no_of_workers):
     # Pre-processing user input    
     if department == 'sewing':
@@ -48,9 +48,16 @@ def prediction(quarter, department, team, targeted_productivity, std_minute_valu
      
     return prediction
     
-    # clf = joblib.load('model.sav')
-    # return clf.predict(quarter, department, team, targeted_productivity, std_minute_value, work_in_progress, over_time, incentive, idle_men, no_of_workers)
 
 if st.button("Predict Productivity"): 
     result = prediction(quarter, department, team, targeted_productivity, std_minute_value, work_in_progress, over_time, incentive, idle_men, no_of_workers) 
-    st.success('Your predicted productivity is {}'.format(result))
+    if result >= 0.75:
+      st.success('Your predicted productivity is: {}'.format((result).round(2))) 
+      st.success('High productivity')    
+   
+    elif result >= 0.5:
+      st.success('Your predicted productivity is {}'.format((result).round(2)))
+      st.success('Moderate productivity')
+    else:
+      st.success('Your predicted productivity is {}'.format((result).round(2)))
+      st.success('Below Average productivity')
